@@ -16,3 +16,12 @@ Funny + Engaging – adds playful remarks and humor to keep things light.
  Typing indicator – shows “ThinkAi is typing…” while generating responses.
 
  Final Answer – after 6 questions, ThinkAi summarizes and provides a complete explanation.
+
+ Start the Flask server:
+
+python app.py
+
+
+You’ll see:
+
+ * Running on http://127.0.0.1:5000
