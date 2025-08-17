@@ -1,14 +1,7 @@
 # ThinkAi-
-An ai chat bot  
-thinkai_flask/
-│
-├── app.py                # Flask backend
-├── templates/
-│   └── index.html        # Chat UI frontend
-└── static/
-    ├── style.css         # Styling for chat interface
-    └── script.js         # Handles sending/receiving messages
-⚡ Installation
+An ai chat bot 
+
+ Installation
 1. Clone or Download Project
 git clone https://github.com/yourusername/thinkai_flask.git
 cd thinkai_flask
@@ -22,7 +15,7 @@ Open app.py and replace the placeholder with your key:
 
 API_KEY = "YOUR_API_KEY"
 
-▶️ Run the Chatbot
+▶ Run the Chatbot
 
 Start the Flask server:
 
