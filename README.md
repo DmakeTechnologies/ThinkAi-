@@ -1,31 +1,18 @@
 # ThinkAi-
 An ai chat bot 
 
- Installation
-1. Clone or Download Project
-git clone https://github.com/yourusername/thinkai_flask.git
-cd thinkai_flask
 
-2. Install Requirements
-pip install flask requests
+ThinkAi is a Flask-powered Socratic chatbot that guides users to learn concepts through questions instead of direct answers.
+It asks 5–6 guiding questions, then gives a final complete answer — with a touch of wit and humor.
 
-3. Add Your Gemini API Key
+Socratic method – never gives the answer directly until enough reasoning is built.
 
-Open app.py and replace the placeholder with your key:
+Funny + Engaging – adds playful remarks and humor to keep things light.
 
-API_KEY = "YOUR_API_KEY"
+ Modern Chat UI – WhatsApp-like chat bubbles, responsive design.
 
-▶ Run the Chatbot
+ New Chat button – reset the conversation anytime.
 
-Start the Flask server:
+ Typing indicator – shows “ThinkAi is typing…” while generating responses.
 
-python app.py
-
-
-You’ll see:
-
- * Running on http://127.0.0.1:5000
-
-
-Open your browser and visit:
-👉 http://127.0.0.1:5000
+ Final Answer – after 6 questions, ThinkAi summarizes and provides a complete explanation.
