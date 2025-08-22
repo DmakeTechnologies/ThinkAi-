@@ -4,12 +4,21 @@ const sendBtn = document.getElementById("send-btn");
 const micBtn = document.getElementById("mic-btn");
 const typingIndicator = document.getElementById("typing-indicator");
 
-// Auto-scroll
-function scrollToBottom() {
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
 let speechEnabled = false;
+let selectedVoice = null; // store female voice
+
+// Load available voices
+function loadVoices() {
+  const voices = window.speechSynthesis.getVoices();
+  // Try to pick a female / pleasant voice
+  selectedVoice = voices.find(voice =>
+    voice.name.toLowerCase().includes("female") ||
+    voice.name.toLowerCase().includes("samantha") ||
+    voice.name.toLowerCase().includes("google us english")
+  ) || voices[0]; // fallback to first voice if not found
+}
+window.speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
 
 // Toggle speech on/off
 document.getElementById("toggle-speech").addEventListener("click", () => {
@@ -20,17 +29,22 @@ document.getElementById("toggle-speech").addEventListener("click", () => {
 
 // Speak function
 function speak(text) {
-  if (!speechEnabled) return; // do nothing if off
+  if (!speechEnabled) return;
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";   // you can change language if needed
-  utterance.rate = 1;         // speed
-  utterance.pitch = 1;        // voice tone
+  utterance.lang = "en-US";
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  if (selectedVoice) utterance.voice = selectedVoice;
   window.speechSynthesis.speak(utterance);
+}
+
+// Auto-scroll
+function scrollToBottom() {
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
 // Add message bubble
 function addMessage(message, sender = "bot") {
-  // Remove welcome message once the chat starts
   const welcome = document.getElementById("welcome-message");
   if (welcome) {
     welcome.remove();
@@ -55,7 +69,6 @@ function addMessage(message, sender = "bot") {
 
   scrollToBottom();
 
-  // 🔊 Speak only bot responses
   if (sender === "bot") {
     speak(message);
   }
