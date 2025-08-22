@@ -34,3 +34,17 @@
   justify-content: center;
   align-items: center;
 }
+/* Add watermark background to chat container */
+#chat-container::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: url("/static/pappu.png") no-repeat center center;
+  background-size: 180px 180px; /* adjust size */
+  opacity: 0.08;  /* subtle effect */
+  width: 200px;
+  height: 200px;
+  pointer-events: none; /* doesn’t block clicks */
+}
