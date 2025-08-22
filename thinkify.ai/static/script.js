@@ -9,8 +9,35 @@ function scrollToBottom() {
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
+let speechEnabled = false;
+
+// Toggle speech on/off
+document.getElementById("toggle-speech").addEventListener("click", () => {
+  speechEnabled = !speechEnabled;
+  const btn = document.getElementById("toggle-speech");
+  btn.textContent = speechEnabled ? "🔊" : "🔈";
+});
+
+// Speak function
+function speak(text) {
+  if (!speechEnabled) return; // do nothing if off
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";   // you can change language if needed
+  utterance.rate = 1;         // speed
+  utterance.pitch = 1;        // voice tone
+  window.speechSynthesis.speak(utterance);
+}
+
 // Add message bubble
 function addMessage(message, sender = "bot") {
+  // Remove welcome message once the chat starts
+  const welcome = document.getElementById("welcome-message");
+  if (welcome) {
+    welcome.remove();
+    chatContainer.classList.remove("flex", "items-center", "justify-center");
+    chatContainer.classList.add("space-y-4");
+  }
+
   const wrapper = document.createElement("div");
   wrapper.classList.add(sender === "user" ? "user-message" : "bot-message");
 
@@ -27,6 +54,11 @@ function addMessage(message, sender = "bot") {
   chatContainer.appendChild(wrapper);
 
   scrollToBottom();
+
+  // 🔊 Speak only bot responses
+  if (sender === "bot") {
+    speak(message);
+  }
 }
 
 // Typing animation
@@ -55,10 +87,6 @@ async function sendMessage() {
   showTyping(false);
   addMessage(data.response, "bot");
 }
-//   // Speak bot response aloud
-//   const utterance = new SpeechSynthesisUtterance(data.response);
-//   speechSynthesis.speak(utterance);
-// }
 
 // Voice input
 micBtn.addEventListener("click", () => {
@@ -78,4 +106,18 @@ sendBtn.addEventListener("click", sendMessage);
 // Send on Enter
 userInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
+});
+
+// 🆕 New Chat button - clears chat history
+document.getElementById("new-chat").addEventListener("click", () => {
+  chatContainer.innerHTML = `
+    <div id="welcome-message" class="flex flex-col items-center justify-center h-full text-center text-gray-400">
+      <h1 class="text-2xl font-bold text-green-400">Welcome to ThinkAi</h1>
+      <p class="mt-2 text-gray-300">
+        Ask me anything — but beware,<br>
+        I’ll answer with more questions first 😉
+      </p>
+    </div>
+  `;
+  userInput.value = "";
 });
