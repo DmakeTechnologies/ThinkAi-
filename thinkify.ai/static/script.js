@@ -101,17 +101,55 @@ async function sendMessage() {
   addMessage(data.response, "bot");
 }
 
-// Voice input
-micBtn.addEventListener("click", () => {
-  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-  recognition.lang = "en-US";
-  recognition.start();
+// 🎤 Voice input with toggle
+let isListening = false; // Track mic state
+let recognition;
 
-  recognition.onresult = (event) => {
-    userInput.value = event.results[0][0].transcript;
-    sendMessage();
-  };
+micBtn.addEventListener("click", () => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("Your browser doesn’t support Speech Recognition.");
+    return;
+  }
+
+  // Initialize recognition only once
+  if (!recognition) {
+    recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.continuous = true; // keep listening until stopped manually
+
+    recognition.onstart = () => {
+      isListening = true;
+      micBtn.innerHTML = `<i class="fas fa-microphone-slash"></i> Listening...`;
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[event.results.length - 1][0].transcript;
+      userInput.value = transcript;
+      sendMessage();
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech error:", event.error);
+    };
+
+    recognition.onend = () => {
+      isListening = false;
+      // Reset to original mic icon
+      micBtn.innerHTML = `<i class="fas fa-microphone"></i>`;
+    };
+  }
+
+  // Toggle listening
+  if (!isListening) {
+    recognition.start();
+  } else {
+    recognition.stop(); // stop immediately on second click
+  }
 });
+
+
 
 // Send on button click
 sendBtn.addEventListener("click", sendMessage);
@@ -121,8 +159,9 @@ userInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-// 🆕 New Chat button - clears chat history
-document.getElementById("new-chat").addEventListener("click", () => {
+// 🆕 New Chat button - clears chat history and resets backend
+document.getElementById("new-chat").addEventListener("click", async () => {
+  // Clear UI
   chatContainer.innerHTML = `
     <div id="welcome-message" class="flex flex-col items-center justify-center h-full text-center text-gray-400">
       <h1 class="text-2xl font-bold text-green-400">Welcome to ThinkAi</h1>
@@ -133,4 +172,12 @@ document.getElementById("new-chat").addEventListener("click", () => {
     </div>
   `;
   userInput.value = "";
+
+  // Reset backend conversation
+  try {
+    await fetch("/reset", { method: "POST" });
+    console.log("Chat reset successfully.");
+  } catch (error) {
+    console.error("Error resetting chat:", error);
+  }
 });
